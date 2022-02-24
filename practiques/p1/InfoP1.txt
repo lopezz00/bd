@@ -1,0 +1,2 @@
+Pràctica realitzada per Ivan Chamero i Marc López.
+SVN: https://escriny.epsem.upc.edu/svn/pract-bd-chamero-lopez

@@ -1,0 +1,20 @@
+-> pelicula:
+        -> codi
+        -> nom
+        -> genere
+        -> segona part?
+
+-> actor
+        -> codi
+        -> nom
+
+
+
+-> Quines pelis interpreta cada actor?
+-> Quin es el directod de cada peli?
+-> Quin es el actor principal de cada peli?
+-> Usuaris que accedeixen al videclub virtual?
+-> Gestio de prestecs dels usuaris?
+    -> Quantes vegades pot llogar la mateixa peli?
+    -> Històric de lloguers?
+-> Gestio de facturació?

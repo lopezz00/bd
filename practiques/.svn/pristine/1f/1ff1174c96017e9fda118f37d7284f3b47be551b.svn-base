@@ -1,0 +1,227 @@
+from resource import prlimit
+import struct
+
+
+
+def crea_parking(plaçes):
+
+    f = open("registreaparcament.bin", "r+b")
+    for e in range(plaçes):
+        f.seek(e * tamany)
+        d = struct.pack(format, str(e).encode(), "EMPTY".encode(), "".encode())
+        f.write(d)
+    f.close()
+
+
+def aparca_cotxe(posicio, matricula):
+
+    f = open("registreaparcament.bin", "r+b")
+    print(posicio,type(posicio))
+    f.seek(int(posicio) * tamany)
+    d = struct.pack(format, posicio.encode(), "FULL".encode(), matricula.encode())
+    f.write(d)
+    f.close()
+
+
+def surt_cotxe(posicio):
+
+    f = open("registreaparcament.bin", "r+b")
+    f.seek(int(posicio) * tamany)
+    d = struct.pack(format, posicio.encode(), "EMPTY".encode(), "".encode())
+    f.write(d)
+    f.close()    
+
+
+def mostra_cotxe(posicio):
+
+    f = open("registreaparcament.bin", "rb")
+    f.seek(posicio * tamany)
+    d = f.read(tamany)
+    t = struct.unpack(format, d)
+    l = list(t)
+    for e in l:
+        print(e.decode(), end = " ")
+        print("\n")    
+    f.close()
+
+
+def mostra_tots():
+
+    f = open("registreaparcament.bin", "rb")
+    for e in range(places):
+        f.seek(int(e) * tamany)
+        d = f.read(tamany)
+        t = struct.unpack(format, d)
+        l = list(t)
+        for e in l:
+            print(e.decode(), end = " ")
+            print("\n")    
+    f.close()                 
+
+
+def check_posicio(posicio):
+
+    f = open("registreaparcament.bin", "rb")
+    f.seek(int(posicio) * tamany)
+    d = f.read(tamany)
+    t = struct.unpack(format, d)
+    l = list(t)
+    if (l[1] == b'FULL\x00'):
+        f.close()
+        return False
+    else:
+        f.close()
+        return True
+
+
+def check_pos_buida():
+
+    f = open("registreaparcament.bin", "rb")
+    for e in range(places):
+        f.seek(e * tamany)
+        d = f.read(tamany)
+        t = struct.unpack(format, d)
+        l = list(t)
+        if (l[1] == b'EMPTY'):
+            f.close()
+            pos = l[0].decode()
+            return pos #Retorna la pos en STR
+    f.close()
+    print("Parking COMPLERT!\nNo pots aparcar en aquest parking.")
+
+
+def check_all_pos_buida():
+
+    f = open("registreaparcament.bin", "rb")
+    for e in range(places):
+        f.seek(e * tamany)
+        d = f.read(tamany)
+        t = struct.unpack(format, d)
+        l = list(t)
+        if (l[1] == b'EMPTY'):
+            pos = l[0].decode()
+            print(pos, end= " ")
+    f.close()
+
+
+def busca_cotxe(matricula):
+
+    f = open("registreaparcament.bin", "rb")
+    for e in range(places):
+        f.seek(e * tamany)
+        d = f.read(tamany)
+        t = struct.unpack(format, d)
+        l = list(t)
+        if (l[2].decode() == matricula):
+            f.close()
+            return True, l[0].decode()
+    f.close()
+    return False, ""
+
+def menu():
+    
+    print ("---------- PARKING CHAMERO/LOPEZ --------- \n\n")
+    print("1. Aparca en un lloc especific \n")
+    print("2. Aparca en el primer lloc buit \n")
+    print("3. Treu un cotxe \n")
+    print("4. Consulta una plaça \n")
+    print("5. Mostra totes les plaçes del parking buides \n")
+    print("6. Buscar un cotxe al parking \n")
+    print("7. Sortir \n")
+    
+
+
+if __name__ == "__main__":          #   Poner la opcion de crear un nuevo parking o usar el existente. Cuando lo usas por primera vez, te lo tiene que crear y chekear si existe alguno.
+
+    interruptor_menu = True
+    format = "4s5s7s"
+    tamany = struct.calcsize(format)
+
+    places = 500
+    crea_parking(places)
+    
+    aparca_cotxe("0", "9882JPX")
+    aparca_cotxe("1", "6912JBT")
+    
+    menu()
+
+    while (interruptor_menu):
+        print("\n")
+        print("-------------------------------")
+        opcio = input("Que vols fer ? ")
+        print("\n")
+        while (opcio != "1" and opcio != "2" and opcio != "3" and opcio != "4" and opcio != "5" and opcio != "6" and opcio != "7"):
+            opcio = input("Que vols fer ? ")
+
+        if (opcio == "1"):
+            lloc = input("En quin lloc vols aparcar ? ")
+            while (not(lloc.isdigit())):
+                lloc = input("En quin lloc vols aparcar ? ")
+            if (check_posicio(lloc)):
+                print("Plaça buida. ")
+                matricula = input("Quina es la teva matricula ? ")
+                while (len(matricula) > 7):
+                    matricula = input("Quina es la teva matricula ? ")
+                aparca_cotxe(lloc, matricula)
+                print("Cotxe aparcat amb exit!")
+            else:
+                print("La plaça està ocupada")        
+
+        elif (opcio == "2"):        #   Hacer la funcion check_pos_buida(), que te devuelva la primera posicion vacia del parking. 
+            print("Buscant posicio buida....\n")
+            pos_buida = check_pos_buida()
+            print(pos_buida)
+            print(type(pos_buida))
+            if (pos_buida != None):
+                matricula = input("Quina es la teva matricula ? ")
+                while (len(matricula) > 7):
+                    matricula = input("Quina es la teva matricula ? ")
+                aparca_cotxe(pos_buida, matricula)
+                print("Cotxe aparcat amb exit!")
+
+        elif (opcio == "3"):
+            lloc = input("De quina plaça vols marxar ? ")
+            while (not(lloc.isdigit())):
+                lloc = input("De quina plaça vols marxar ? ")
+            if (check_posicio(lloc)):
+                print("Plaça buida. ")
+
+            else:
+                surt_cotxe(lloc)
+                print("Cotxe retirat amb exit!") 
+
+        elif (opcio == "4"):
+            lloc = input("Quina plaça vols consular ? ")
+            while (not(lloc.isdigit())):
+                lloc = input("Quina plaça vols consular ? ")
+            if (check_posicio(lloc)):
+                print("Plaça buida. ")
+            else:
+                mostra_cotxe(int(lloc))
+                
+
+        elif (opcio == "5"):        #   Hacer una funcion para printear l[0] de las plazas que en l[1] == b'FULL\x00'.
+            print("Llistat de places buides:\n")
+            check_all_pos_buida()
+
+        elif (opcio == "6"):        #   Hacer funcion para buscar en el parking si una matricula esta o no.
+            matricula = input("Quina matricula estas buscant? ")
+            while (len(matricula) > 7):
+                matricula = input("Quina matricula estas buscant? ")
+            estat,pos = busca_cotxe(matricula)
+            if (estat == True):
+                print("Cotxe trobat a la posicio --> ",pos)
+            else:
+                print("Aquest cotxe no esta aparcat en el nostre Parking.")
+
+        else:
+            interruptor_menu = False
+    
+
+
+
+
+    
+
+    
+

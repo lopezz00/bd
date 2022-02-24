@@ -1,0 +1,30 @@
+import struct
+format = "3s5s7s"
+
+tamany = struct.calcsize(format)
+f = open("fitxerbinari.bin", "wb")
+f.seek(3*tamany)
+d = struct.pack(format, "102".encode(), "EMPTY".encode(), "1234JPX".encode())
+f.write(d)
+f.close()
+
+f = open("fitxerbinari.bin", "rb")
+f.seek(3*tamany)
+d = f.read(tamany)
+t = struct.unpack(format, d)
+print(t)
+l = list(t)
+for e in l:
+    print(e.decode())
+f.close()    
+
+f = open("fitxerbinari.bin", "rb")
+f.seek(50*tamany)
+d = f.read(tamany)
+t = struct.unpack(format, d)
+print(t)
+l = list(t)
+for e in l:
+    print(e.decode())
+f.close()    
+
